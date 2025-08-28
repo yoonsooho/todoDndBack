@@ -1,11 +1,11 @@
-import { Schedule } from 'src/schedule/schedule.entity';
+import { ScheduleUser } from 'src/schedule-user/entities/schedule-user.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity({
   name: 'users',
 })
 export class User {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column({
@@ -37,6 +37,12 @@ export class User {
   })
   refreshToken?: string;
 
-  @OneToMany(() => Schedule, (schedule) => schedule.user)
-  schedules: Schedule[];
+  @Column({ nullable: true })
+  socialId?: string;
+
+  @Column({ nullable: true })
+  social?: string;
+
+  @OneToMany(() => ScheduleUser, (scheduleUser) => scheduleUser.user)
+  scheduleUsers: ScheduleUser[];
 }

@@ -41,15 +41,22 @@ export class ScheduleController {
   async update(
     @Param('scheduleId', ParseIntPipe) scheduleId: number,
     @Body() updateScheduleDto: UpdateScheduleDto,
+    @Req() req: Request,
   ) {
+    const userId = req.user['sub']; // or req.user.id
     return this.scheduleService.updateByScheduleId(
       scheduleId,
+      userId,
       updateScheduleDto,
     );
   }
 
   @Delete(':scheduleId')
-  async remove(@Param('scheduleId', ParseIntPipe) scheduleId: number) {
-    return this.scheduleService.deleteByScheduleId(scheduleId);
+  async remove(
+    @Param('scheduleId', ParseIntPipe) scheduleId: number,
+    @Req() req: Request,
+  ) {
+    const userId = req.user['sub']; // or req.user.id
+    return this.scheduleService.deleteByScheduleId(scheduleId, userId);
   }
 }

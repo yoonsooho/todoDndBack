@@ -10,6 +10,7 @@ import { PostService } from './post/post.service';
 import { PostController } from './post/post.controller';
 import { PostModule } from './post/post.module';
 import { ContentItemModule } from './content-item/content-item.module';
+import { ScheduleUserModule } from './schedule-user/schedule-user.module';
 import typeorm from 'src/config/typeorm';
 
 @Module({
@@ -29,6 +30,7 @@ import typeorm from 'src/config/typeorm';
     ScheduleModule,
     PostModule,
     ContentItemModule,
+    ScheduleUserModule,
   ],
   controllers: [AppController, PostController],
   providers: [AppService, PostService],

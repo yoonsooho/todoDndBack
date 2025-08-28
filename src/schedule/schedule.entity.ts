@@ -1,11 +1,9 @@
 import { Post } from 'src/post/post.entity';
-import { User } from 'src/users/users.entity';
+import { ScheduleUser } from 'src/schedule-user/entities/schedule-user.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
-  JoinColumn,
-  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -25,28 +23,21 @@ export class Schedule {
   })
   title: string;
 
-  @ManyToOne(() => User, (user) => user.schedules, { nullable: false })
-  @JoinColumn({ name: 'user_id' })
-  user: User;
-
   @OneToMany(() => Post, (post) => post.schedule)
   posts: Post[];
 
-  @Column({
-    type: 'date',
-    nullable: false,
-  })
-  startDate: Date;
+  @Column({ type: 'date', nullable: false })
+  startDate: string;
 
-  @Column({
-    type: 'date',
-    nullable: true,
-  })
-  endDate: Date;
+  @Column({ type: 'date', nullable: true })
+  endDate?: string;
 
   @CreateDateColumn()
   createdAt: Date;
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @OneToMany(() => ScheduleUser, (scheduleUser) => scheduleUser.schedule)
+  scheduleUsers: ScheduleUser[];
 }
