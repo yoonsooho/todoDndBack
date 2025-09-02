@@ -10,8 +10,8 @@ import { Post } from 'src/post/post.entity';
 
 @Entity('content_items')
 export class ContentItem {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
   @Column({ type: 'text', nullable: false })
   text: string;

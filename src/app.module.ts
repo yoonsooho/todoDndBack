@@ -6,8 +6,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { ScheduleModule } from './schedule/schedule.module';
-import { PostService } from './post/post.service';
-import { PostController } from './post/post.controller';
 import { PostModule } from './post/post.module';
 import { ContentItemModule } from './content-item/content-item.module';
 import { ScheduleUserModule } from './schedule-user/schedule-user.module';
@@ -32,7 +30,7 @@ import typeorm from 'src/config/typeorm';
     ContentItemModule,
     ScheduleUserModule,
   ],
-  controllers: [AppController, PostController],
-  providers: [AppService, PostService],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule {}

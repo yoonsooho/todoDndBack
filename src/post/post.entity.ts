@@ -11,8 +11,8 @@ import { ContentItem } from 'src/content-item/content-item.entity';
 
 @Entity('posts')
 export class Post {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
   @Column({ type: 'varchar', length: 255, nullable: false })
   title: string;
