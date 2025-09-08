@@ -45,8 +45,8 @@ export class AuthController {
     });
 
     // Cross-origin 배포 환경을 위한 쿠키 설정
-    const cookieOptions = {
-      maxAge: 1000 * 60 * 60, // 1시간
+    const accessCookieOptions = {
+      maxAge: 1000 * 60 * 15, // 15분
       secure: isProduction, // HTTPS에서만
       sameSite: (isProduction ? 'none' : 'lax') as 'none' | 'lax', // Cross-origin 허용
       path: '/',
@@ -60,13 +60,8 @@ export class AuthController {
       path: '/',
     };
 
-    res.cookie('access_token', tokens.accessToken, cookieOptions);
+    res.cookie('access_token', tokens.accessToken, accessCookieOptions);
     res.cookie('refresh_token', tokens.refreshToken, refreshCookieOptions);
-
-    console.log('Cookie options applied:', {
-      cookieOptions,
-      refreshCookieOptions,
-    });
 
     return {
       access_token: tokens.accessToken,
@@ -117,7 +112,7 @@ export class AuthController {
     return {
       access_token: tokens.accessToken,
       refresh_token: tokens.refreshToken,
-      message: '로그인 성공',
+      message: '토큰 갱신 성공',
     };
   }
 }
