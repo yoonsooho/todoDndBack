@@ -34,7 +34,7 @@ export class AuthController {
 
     // Cross-origin 배포 환경을 위한 쿠키 설정
     const accessCookieOptions = {
-      maxAge: 1000 * 60 * 1, // 15분
+      maxAge: 1000 * 60 * 15, // 15분
       secure: isProduction, // HTTPS에서만
       sameSite: (isProduction ? 'none' : 'lax') as 'none' | 'lax', // Cross-origin 허용
       path: '/',
