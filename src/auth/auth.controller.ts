@@ -31,12 +31,15 @@ export class AuthController {
   ) {
     const tokens = await this.authService.signIn(data);
     const isProduction = process.env.NODE_ENV === 'production';
+    const accessExpires = new Date(Date.now() + 1000 * 60 * 60); // 1시간
+    const refreshExpires = new Date(Date.now() + 1000 * 60 * 60 * 24 * 7); // 7일
 
     // // 쿠키 설정은 컨트롤러에서!
     res.cookie('access_token', tokens.accessToken, {
       secure: isProduction,
       sameSite: isProduction ? 'none' : 'lax',
       maxAge: 1000 * 60 * 60,
+      expires: accessExpires,
       path: '/',
     });
 
@@ -45,6 +48,7 @@ export class AuthController {
       secure: isProduction,
       sameSite: isProduction ? 'none' : 'lax',
       maxAge: 1000 * 60 * 60 * 24 * 7,
+      expires: refreshExpires,
       path: '/',
     });
 
@@ -96,12 +100,15 @@ export class AuthController {
       refreshToken,
     );
     const isProduction = process.env.NODE_ENV === 'production';
+    const accessExpires = new Date(Date.now() + 1000 * 60 * 60); // 1시간
+    const refreshExpires = new Date(Date.now() + 1000 * 60 * 60 * 24 * 7); // 7일
 
     // // 쿠키 설정은 컨트롤러에서!
     res.cookie('access_token', tokens.accessToken, {
       secure: isProduction,
       sameSite: isProduction ? 'none' : 'lax',
       maxAge: 1000 * 60 * 60,
+      expires: accessExpires,
       path: '/',
     });
 
@@ -110,6 +117,7 @@ export class AuthController {
       secure: isProduction,
       sameSite: isProduction ? 'none' : 'lax',
       maxAge: 1000 * 60 * 60 * 24 * 7,
+      expires: refreshExpires,
       path: '/',
     });
 
