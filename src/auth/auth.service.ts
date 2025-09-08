@@ -24,7 +24,7 @@ export class AuthService {
     // user exists?
 
     const existUser = await this.usersService.findByUserId(data.userId);
-    console.log(existUser);
+
     if (existUser) {
       throw new BadRequestException(
         `${data.userId}로 이미 가입된 계정이 있습니다.`,

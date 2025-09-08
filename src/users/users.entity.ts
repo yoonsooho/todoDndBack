@@ -12,13 +12,14 @@ export class User {
     type: 'varchar',
     length: 255,
     nullable: false,
+    unique: true,
   })
   userId: string;
 
   @Column({
     type: 'varchar',
     length: 255,
-    unique: true,
+
     nullable: false,
   })
   username: string;
