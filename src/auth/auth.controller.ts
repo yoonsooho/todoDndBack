@@ -32,21 +32,9 @@ export class AuthController {
     const tokens = await this.authService.signIn(data);
     const isProduction = process.env.NODE_ENV === 'production';
 
-    // 테스트: 매우 긴 만료시간으로 설정
-    const now = Date.now();
-    const accessExpires = new Date(now + 1000 * 60 * 60 * 24 * 30); // 30일 후
-    const refreshExpires = new Date(now + 1000 * 60 * 60 * 24 * 365); // 1년 후
-
-    console.log('Setting cookies (LONG expiry for testing):', {
-      isProduction,
-      nowUTC: new Date(now).toISOString(),
-      accessExpiresUTC: accessExpires.toISOString(),
-      refreshExpiresUTC: refreshExpires.toISOString(),
-    });
-
     // Cross-origin 배포 환경을 위한 쿠키 설정
     const accessCookieOptions = {
-      maxAge: 1000 * 60 * 15, // 15분
+      maxAge: 1000 * 60 * 1, // 15분
       secure: isProduction, // HTTPS에서만
       sameSite: (isProduction ? 'none' : 'lax') as 'none' | 'lax', // Cross-origin 허용
       path: '/',
