@@ -30,19 +30,22 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ) {
     const tokens = await this.authService.signIn(data);
+    const isProduction = process.env.NODE_ENV === 'production';
 
     // // 쿠키 설정은 컨트롤러에서!
     res.cookie('access_token', tokens.accessToken, {
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
+      secure: isProduction,
+      sameSite: isProduction ? 'none' : 'lax',
       maxAge: 1000 * 60 * 60,
+      path: '/',
     });
 
     res.cookie('refresh_token', tokens.refreshToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
+      secure: isProduction,
+      sameSite: isProduction ? 'none' : 'lax',
       maxAge: 1000 * 60 * 60 * 24 * 7,
+      path: '/',
     });
 
     return {
@@ -56,18 +59,22 @@ export class AuthController {
   signOut(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
     const userId = req.user['sub'];
     this.authService.signOut(userId);
+    const isProduction = process.env.NODE_ENV === 'production';
+
     // // 쿠키 설정은 컨트롤러에서!
-    res.cookie('access_token', null, {
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
+    res.cookie('access_token', '', {
+      secure: isProduction,
+      sameSite: isProduction ? 'none' : 'lax',
       maxAge: 0,
+      path: '/',
     });
 
-    res.cookie('refresh_token', null, {
+    res.cookie('refresh_token', '', {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
+      secure: isProduction,
+      sameSite: isProduction ? 'none' : 'lax',
       maxAge: 0,
+      path: '/',
     });
 
     return {
@@ -88,18 +95,22 @@ export class AuthController {
       userId,
       refreshToken,
     );
+    const isProduction = process.env.NODE_ENV === 'production';
+
     // // 쿠키 설정은 컨트롤러에서!
     res.cookie('access_token', tokens.accessToken, {
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
+      secure: isProduction,
+      sameSite: isProduction ? 'none' : 'lax',
       maxAge: 1000 * 60 * 60,
+      path: '/',
     });
 
     res.cookie('refresh_token', tokens.refreshToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
+      secure: isProduction,
+      sameSite: isProduction ? 'none' : 'lax',
       maxAge: 1000 * 60 * 60 * 24 * 7,
+      path: '/',
     });
 
     return {
