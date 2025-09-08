@@ -44,30 +44,35 @@ export class AuthController {
       refreshExpiresUTC: refreshExpires.toISOString(),
     });
 
-    // // 쿠키 설정은 컨트롤러에서!
-    res.cookie('access_token', tokens.accessToken, {
-      httpOnly: false, // 클라이언트에서 확인 가능하도록
-      secure: isProduction,
-      sameSite: isProduction ? 'none' : 'lax',
-      maxAge: 1000 * 60 * 60 * 24 * 30, // 30일 (테스트용)
-      expires: accessExpires, // 30일 후 만료
+    // Cross-origin 배포 환경을 위한 쿠키 설정
+    const cookieOptions = {
+      maxAge: 1000 * 60 * 60, // 1시간
+      secure: isProduction, // HTTPS에서만
+      sameSite: (isProduction ? 'none' : 'lax') as 'none' | 'lax', // Cross-origin 허용
       path: '/',
-      domain: isProduction ? undefined : 'localhost',
-    });
+    };
 
-    res.cookie('refresh_token', tokens.refreshToken, {
-      httpOnly: true,
+    const refreshCookieOptions = {
+      maxAge: 1000 * 60 * 60 * 24 * 7, // 7일
       secure: isProduction,
-      sameSite: isProduction ? 'none' : 'lax',
-      maxAge: 1000 * 60 * 60 * 24 * 365, // 1년 (테스트용)
-      expires: refreshExpires, // 1년 후 만료
+      sameSite: (isProduction ? 'none' : 'lax') as 'none' | 'lax',
+      httpOnly: true, // XSS 방지
       path: '/',
-      domain: isProduction ? undefined : 'localhost',
+    };
+
+    res.cookie('access_token', tokens.accessToken, cookieOptions);
+    res.cookie('refresh_token', tokens.refreshToken, refreshCookieOptions);
+
+    console.log('Cookie options applied:', {
+      cookieOptions,
+      refreshCookieOptions,
     });
 
     return {
       access_token: tokens.accessToken,
+      refresh_token: tokens.refreshToken, // Safari/Chrome 쿠키 차단 대비
       message: '로그인 성공',
+      cookieSupport: true, // 쿠키도 시도함을 알림
     };
   }
 
@@ -114,34 +119,28 @@ export class AuthController {
     );
     const isProduction = process.env.NODE_ENV === 'production';
 
-    // UTC 기준으로 정확하게 계산
-    const now = Date.now(); // UTC 타임스탬프
-    const accessExpires = new Date(now + 1000 * 60 * 60); // 1시간 후
-    const refreshExpires = new Date(now + 1000 * 60 * 60 * 24 * 7); // 7일 후
-
-    console.log(
-      'Refresh: Setting cookies with both maxAge and expires (UTC corrected)',
-    );
-
-    // // 쿠키 설정은 컨트롤러에서!
-    res.cookie('access_token', tokens.accessToken, {
-      httpOnly: false,
-      secure: isProduction,
-      sameSite: isProduction ? 'none' : 'lax',
-      maxAge: 1000 * 60 * 60, // 상대적 시간
-      expires: accessExpires, // 절대적 시간 (UTC 기준)
+    // 로그인과 동일한 쿠키 설정 적용
+    const cookieOptions = {
+      maxAge: 1000 * 60 * 15, // 15분
+      secure: isProduction, // HTTPS에서만
+      sameSite: (isProduction ? 'none' : 'lax') as 'none' | 'lax', // Cross-origin 허용
       path: '/',
-      domain: isProduction ? undefined : 'localhost',
-    });
+    };
 
-    res.cookie('refresh_token', tokens.refreshToken, {
-      httpOnly: true,
+    const refreshCookieOptions = {
+      maxAge: 1000 * 60 * 60 * 24 * 7, // 7일
       secure: isProduction,
-      sameSite: isProduction ? 'none' : 'lax',
-      maxAge: 1000 * 60 * 60 * 24 * 7, // 상대적 시간
-      expires: refreshExpires, // 절대적 시간 (UTC 기준)
+      sameSite: (isProduction ? 'none' : 'lax') as 'none' | 'lax',
+      httpOnly: true, // XSS 방지
       path: '/',
-      domain: isProduction ? undefined : 'localhost',
+    };
+
+    res.cookie('access_token', tokens.accessToken, cookieOptions);
+    res.cookie('refresh_token', tokens.refreshToken, refreshCookieOptions);
+
+    console.log('Refresh: Cookie options applied:', {
+      cookieOptions,
+      refreshCookieOptions,
     });
 
     return {
