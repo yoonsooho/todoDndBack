@@ -22,10 +22,12 @@ export class AuthService {
   // signUp
   async signUp(data: SignUpDto): Promise<any> {
     // user exists?
-    const existUser = await this.usersService.findByUsername(data.username);
+
+    const existUser = await this.usersService.findByUserId(data.userId);
+    console.log(existUser);
     if (existUser) {
       throw new BadRequestException(
-        `${data.username}으로 이미 가입된 계정이 있습니다.`,
+        `${data.userId}로 이미 가입된 계정이 있습니다.`,
       );
     }
 
@@ -45,7 +47,7 @@ export class AuthService {
 
   // signIn
   async signIn(data: SignInDto): Promise<any> {
-    const user = await this.usersService.findByUsername(data.username);
+    const user = await this.usersService.findByUserId(data.userId);
     if (!user) {
       throw new BadRequestException('사용자를 찾을 수 없습니다.');
     }
@@ -106,7 +108,7 @@ export class AuthService {
       this.jwtService.signAsync(
         {
           sub: user.id,
-          username: user.username,
+          userId: user.userId,
         },
         {
           secret: this.configService.get('JWT_ACCESS_SECRET'),
@@ -116,7 +118,7 @@ export class AuthService {
       this.jwtService.signAsync(
         {
           sub: user.id,
-          username: user.username,
+          userId: user.userId,
         },
         {
           secret: this.configService.get('JWT_REFRESH_SECRET'),

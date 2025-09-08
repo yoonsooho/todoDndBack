@@ -25,7 +25,8 @@ export class PostController {
 
   @Get()
   async findAll(
-    @Query('scheduleId', new ParseIntPipe({ optional: true })) scheduleId?: number,
+    @Query('scheduleId', new ParseIntPipe({ optional: true }))
+    scheduleId?: number,
   ): Promise<PostEntity[]> {
     if (scheduleId) {
       return this.postService.findByScheduleId(scheduleId);

@@ -15,7 +15,9 @@ export class ContentItemService {
     private readonly postRepository: Repository<Post>,
   ) {}
 
-  async create(createContentItemDto: CreateContentItemDto): Promise<ContentItem> {
+  async create(
+    createContentItemDto: CreateContentItemDto,
+  ): Promise<ContentItem> {
     // Post 존재 여부 확인
     const post = await this.postRepository.findOne({
       where: { id: createContentItemDto.post_id },
@@ -61,7 +63,10 @@ export class ContentItemService {
     });
   }
 
-  async update(id: number, updateContentItemDto: UpdateContentItemDto): Promise<ContentItem> {
+  async update(
+    id: number,
+    updateContentItemDto: UpdateContentItemDto,
+  ): Promise<ContentItem> {
     const contentItem = await this.findOne(id);
 
     if (updateContentItemDto.post_id) {

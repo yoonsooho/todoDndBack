@@ -19,7 +19,9 @@ export class ContentItemController {
   constructor(private readonly contentItemService: ContentItemService) {}
 
   @Post()
-  async create(@Body() createContentItemDto: CreateContentItemDto): Promise<ContentItem> {
+  async create(
+    @Body() createContentItemDto: CreateContentItemDto,
+  ): Promise<ContentItem> {
     return this.contentItemService.create(createContentItemDto);
   }
 
