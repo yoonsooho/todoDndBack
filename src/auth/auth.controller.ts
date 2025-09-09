@@ -89,18 +89,42 @@ export class AuthController {
 
   @UseGuards(RefreshTokenGuard)
   @Get('refresh')
-  async refreshAllTokens(@Req() req: Request) {
+  async refreshAllTokens(
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+  ) {
     const userId = req.user['sub'];
     const refreshToken = req.user['refreshToken'];
     const tokens = await this.authService.refreshAllTokens(
       userId,
       refreshToken,
     );
+    const isProduction = process.env.NODE_ENV === 'production';
+
+    // Cross-origin 배포 환경을 위한 쿠키 설정
+    const accessCookieOptions = {
+      maxAge: 1000 * 60 * 15, // 15분
+      secure: isProduction, // HTTPS에서만
+      sameSite: (isProduction ? 'none' : 'lax') as 'none' | 'lax', // Cross-origin 허용
+      path: '/',
+    };
+
+    const refreshCookieOptions = {
+      maxAge: 1000 * 60 * 60 * 24 * 7, // 7일
+      secure: isProduction,
+      sameSite: (isProduction ? 'none' : 'lax') as 'none' | 'lax',
+      httpOnly: true, // XSS 방지
+      path: '/',
+    };
+
+    res.cookie('access_token', tokens.accessToken, accessCookieOptions);
+    res.cookie('refresh_token', tokens.refreshToken, refreshCookieOptions);
 
     return {
       access_token: tokens.accessToken,
-      refresh_token: tokens.refreshToken,
+      refresh_token: tokens.refreshToken, // Safari/Chrome 쿠키 차단 대비
       message: '토큰 갱신 성공',
+      cookieSupport: true, // 쿠키도 시도함을 알림
     };
   }
 }
