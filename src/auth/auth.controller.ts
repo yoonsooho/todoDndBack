@@ -52,10 +52,7 @@ export class AuthController {
     res.cookie('refresh_token', tokens.refreshToken, refreshCookieOptions);
 
     return {
-      access_token: tokens.accessToken,
-      refresh_token: tokens.refreshToken, // Safari/Chrome 쿠키 차단 대비
       message: '로그인 성공',
-      cookieSupport: true, // 쿠키도 시도함을 알림
     };
   }
 
@@ -121,10 +118,7 @@ export class AuthController {
     res.cookie('refresh_token', tokens.refreshToken, refreshCookieOptions);
 
     return {
-      access_token: tokens.accessToken,
-      refresh_token: tokens.refreshToken, // Safari/Chrome 쿠키 차단 대비
       message: '토큰 갱신 성공',
-      cookieSupport: true, // 쿠키도 시도함을 알림
     };
   }
 }
