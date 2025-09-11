@@ -6,7 +6,7 @@ import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 })
 export class User {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id: string; //유저 고유의 식별을 위한 아이디
 
   @Column({
     type: 'varchar',
@@ -14,7 +14,7 @@ export class User {
     nullable: false,
     unique: true,
   })
-  userId: string;
+  userId: string; //유저의 로그인 아이디
 
   @Column({
     type: 'varchar',

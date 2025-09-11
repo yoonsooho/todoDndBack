@@ -23,6 +23,7 @@ export class ScheduleController {
 
   @Get()
   async findAll(@Req() req: Request) {
+    console.log('req.user', req.user);
     return this.scheduleService.findAllByUserId(req.user['sub']);
   }
 
@@ -33,7 +34,7 @@ export class ScheduleController {
   ) {
     return this.scheduleService.create({
       ...createScheduleDto,
-      userId: req.user['sub'],
+      usersId: req.user['sub'],
     });
   }
 
@@ -43,10 +44,10 @@ export class ScheduleController {
     @Body() updateScheduleDto: UpdateScheduleDto,
     @Req() req: Request,
   ) {
-    const userId = req.user['sub']; // or req.user.id
+    const usersId = req.user['sub']; // or req.user.id
     return this.scheduleService.updateByScheduleId(
       scheduleId,
-      userId,
+      usersId,
       updateScheduleDto,
     );
   }
@@ -56,7 +57,7 @@ export class ScheduleController {
     @Param('scheduleId', ParseIntPipe) scheduleId: number,
     @Req() req: Request,
   ) {
-    const userId = req.user['sub']; // or req.user.id
-    return this.scheduleService.deleteByScheduleId(scheduleId, userId);
+    const usersId = req.user['sub']; // or req.user.id
+    return this.scheduleService.deleteByScheduleId(scheduleId, usersId);
   }
 }

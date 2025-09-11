@@ -25,7 +25,7 @@ export class ScheduleService {
    */
   async create(createScheduleDto: CreateScheduleDto): Promise<Schedule> {
     const user = await this.userRepository.findOneBy({
-      id: createScheduleDto.userId,
+      id: createScheduleDto.usersId,
     });
     if (!user) throw new Error('User not found');
 
