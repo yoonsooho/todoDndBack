@@ -48,8 +48,16 @@ export class AuthController {
       path: '/',
     };
 
+    console.log('🍪 Login Cookie Setting:', {
+      isProduction,
+      accessCookieOptions,
+      refreshCookieOptions,
+    });
+
     res.cookie('access_token', tokens.accessToken, accessCookieOptions);
     res.cookie('refresh_token', tokens.refreshToken, refreshCookieOptions);
+
+    console.log('✅ Login cookies set');
 
     return {
       message: '로그인 성공',
@@ -67,6 +75,12 @@ export class AuthController {
       isProduction,
       NODE_ENV: process.env.NODE_ENV,
       cookies: req.cookies,
+      headers: {
+        cookie: req.headers.cookie,
+        origin: req.headers.origin,
+        referer: req.headers.referer,
+        'user-agent': req.headers['user-agent'],
+      },
     });
 
     // 쿠키 삭제 시 생성할 때와 동일한 옵션 사용 (httpOnly 제외하고)
@@ -78,14 +92,7 @@ export class AuthController {
 
     console.log('🍪 Clear Cookie Options:', clearCookieOptions);
 
-    // 방법 1: clearCookie 사용
-    res.clearCookie('access_token', clearCookieOptions);
-    res.clearCookie('refresh_token', {
-      ...clearCookieOptions,
-      httpOnly: true,
-    });
-
-    // 방법 2: 명시적 만료 시간 설정 (fallback)
+    // 쿠키 삭제 (명시적 방법 사용)
     res.cookie('access_token', '', {
       ...clearCookieOptions,
       expires: new Date(0), // 1970년 1월 1일 (과거)
