@@ -56,6 +56,8 @@ export class ScheduleController {
     @Param('scheduleId', ParseIntPipe) scheduleId: number,
     @Req() req: Request,
   ) {
+    console.log('scheduleId', scheduleId);
+    console.log('req.user', req.user);
     const usersId = req.user['sub']; // or req.user.id
     return this.scheduleService.deleteByScheduleId(scheduleId, usersId);
   }

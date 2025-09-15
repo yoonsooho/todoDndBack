@@ -14,6 +14,9 @@ export class Post {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Column({ type: 'integer', nullable: false })
+  seq: number;
+
   @Column({ type: 'varchar', length: 255, nullable: false })
   title: string;
 
