@@ -63,21 +63,43 @@ export class AuthController {
     this.authService.signOut(userId);
     const isProduction = process.env.NODE_ENV === 'production';
 
-    // // 쿠키 설정은 컨트롤러에서!
-    res.cookie('access_token', '', {
+    console.log('🚀 Logout Debug Info:', {
+      isProduction,
+      NODE_ENV: process.env.NODE_ENV,
+      cookies: req.cookies,
+    });
+
+    // 쿠키 삭제 시 생성할 때와 동일한 옵션 사용 (httpOnly 제외하고)
+    const clearCookieOptions = {
       secure: isProduction,
-      sameSite: isProduction ? 'none' : 'lax',
-      maxAge: 0,
+      sameSite: (isProduction ? 'none' : 'lax') as 'none' | 'lax',
       path: '/',
+    };
+
+    console.log('🍪 Clear Cookie Options:', clearCookieOptions);
+
+    // 방법 1: clearCookie 사용
+    res.clearCookie('access_token', clearCookieOptions);
+    res.clearCookie('refresh_token', {
+      ...clearCookieOptions,
+      httpOnly: true,
+    });
+
+    // 방법 2: 명시적 만료 시간 설정 (fallback)
+    res.cookie('access_token', '', {
+      ...clearCookieOptions,
+      expires: new Date(0), // 1970년 1월 1일 (과거)
+      maxAge: 0,
     });
 
     res.cookie('refresh_token', '', {
+      ...clearCookieOptions,
       httpOnly: true,
-      secure: isProduction,
-      sameSite: isProduction ? 'none' : 'lax',
+      expires: new Date(0),
       maxAge: 0,
-      path: '/',
     });
+
+    console.log('✅ Cookies cleared');
 
     return {
       message: '로그아웃 성공',
