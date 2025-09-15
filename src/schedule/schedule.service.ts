@@ -1,7 +1,7 @@
 import { Injectable, ForbiddenException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CreateScheduleDto } from 'src/schedule/dto/create-schedule.dto';
 import { UpdateScheduleDto } from 'src/schedule/dto/update-schedule.dto';
+import { CreateScheduleInput } from 'src/schedule/dto/create-schedule.dto';
 import { Schedule } from 'src/schedule/schedule.entity';
 import { User } from 'src/users/users.entity';
 import { ScheduleUser } from 'src/schedule-user/entities/schedule-user.entity';
@@ -23,7 +23,7 @@ export class ScheduleService {
    * - Schedule 생성 후
    * - ScheduleUser에 연결 (생성자는 canEdit: true)
    */
-  async create(createScheduleDto: CreateScheduleDto): Promise<Schedule> {
+  async create(createScheduleDto: CreateScheduleInput): Promise<Schedule> {
     const user = await this.userRepository.findOneBy({
       id: createScheduleDto.usersId,
     });

@@ -5,11 +5,11 @@ export class CreateScheduleDto {
   @IsNotEmpty()
   title: string;
 
+  @IsString()
   @IsNotEmpty()
-  usersId: string; // user relation은 id만 받아오는 경우가 일반적임
-
   startDate: string; // Date를 직접 받기보단 string으로 받아서 변환하는 게 일반적
 
   @IsOptional()
   endDate?: string;
 }
+export type CreateScheduleInput = CreateScheduleDto & { usersId: string };

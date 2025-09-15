@@ -31,7 +31,6 @@ export class ScheduleController {
     @Req() req: Request,
     @Body() createScheduleDto: CreateScheduleDto,
   ) {
-    console.log('createScheduleDto', createScheduleDto);
     return this.scheduleService.create({
       ...createScheduleDto,
       usersId: req.user['sub'],
