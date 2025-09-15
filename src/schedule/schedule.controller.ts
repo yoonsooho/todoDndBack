@@ -23,7 +23,6 @@ export class ScheduleController {
 
   @Get()
   async findAll(@Req() req: Request) {
-    console.log('req.user', req.user);
     return this.scheduleService.findAllByUserId(req.user['sub']);
   }
 
@@ -32,6 +31,7 @@ export class ScheduleController {
     @Req() req: Request,
     @Body() createScheduleDto: CreateScheduleDto,
   ) {
+    console.log('createScheduleDto', createScheduleDto);
     return this.scheduleService.create({
       ...createScheduleDto,
       usersId: req.user['sub'],
