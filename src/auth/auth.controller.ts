@@ -93,8 +93,10 @@ export class AuthController {
       // RefreshTokenGuard를 사용하여 토큰 검증
       return await this.refreshTokens(req, res);
     } catch (error) {
+      console.log('🚨 Refresh token error caught:', error.message);
       // 토큰이 유효하지 않으면 쿠키 삭제
       this.clearCookies(res);
+      console.log('🍪 Cookies cleared due to error');
       throw error;
     }
   }
@@ -135,12 +137,15 @@ export class AuthController {
   }
 
   private clearCookies(res: Response) {
+    console.log('🧹 Starting to clear cookies...');
     const isProduction = process.env.NODE_ENV === 'production';
     const clearCookieOptions = {
       secure: isProduction,
       sameSite: (isProduction ? 'none' : 'lax') as 'none' | 'lax',
       path: '/',
     };
+
+    console.log('🍪 Clear cookie options:', clearCookieOptions);
 
     res.cookie('access_token', '', {
       ...clearCookieOptions,
@@ -151,5 +156,7 @@ export class AuthController {
       httpOnly: true,
       maxAge: 0,
     });
+
+    console.log('✅ Cookies clear commands sent');
   }
 }
