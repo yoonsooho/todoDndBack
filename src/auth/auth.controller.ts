@@ -105,6 +105,7 @@ export class AuthController {
   private async refreshTokens(req: Request, res: Response) {
     // req.user가 없으면 에러 던지기
     if (!req.user) {
+      this.clearCookies(res);
       throw new Error('User not authenticated');
     }
 
