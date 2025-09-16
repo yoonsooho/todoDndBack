@@ -50,6 +50,10 @@ export class PostService {
   async findAll(): Promise<Post[]> {
     return this.postRepository.find({
       relations: ['schedule', 'contentItems'],
+      order: {
+        seq: 'ASC',
+        contentItems: { seq: 'ASC' },
+      },
     });
   }
 
@@ -57,6 +61,9 @@ export class PostService {
     const post = await this.postRepository.findOne({
       where: { id },
       relations: ['schedule', 'contentItems'],
+      order: {
+        contentItems: { seq: 'ASC' },
+      },
     });
 
     if (!post) {
@@ -70,6 +77,10 @@ export class PostService {
     return this.postRepository.find({
       where: { schedule: { id: scheduleId } },
       relations: ['schedule', 'contentItems'],
+      order: {
+        seq: 'ASC',
+        contentItems: { seq: 'ASC' },
+      },
     });
   }
 
@@ -123,7 +134,10 @@ export class PostService {
     return this.postRepository.find({
       where: { schedule: { id: scheduleId } },
       relations: ['schedule', 'contentItems'],
-      order: { seq: 'ASC' },
+      order: {
+        seq: 'ASC',
+        contentItems: { seq: 'ASC' },
+      },
     });
   }
 }

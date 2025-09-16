@@ -107,13 +107,18 @@ export class ScheduleService {
   ): Promise<boolean> {
     const scheduleUser = await this.scheduleUserRepository.findOne({
       where: { user: { id: userId }, schedule: { id: scheduleId } },
-      relations: ['schedule'],
+      relations: ['schedule', 'schedule.posts'],
     });
 
     if (!scheduleUser) throw new Error('Schedule not found or not shared');
     if (!scheduleUser.canEdit) {
       throw new ForbiddenException(
         'You do not have permission to delete this schedule',
+      );
+    }
+    if (scheduleUser.schedule.posts.length > 0) {
+      throw new ForbiddenException(
+        '내부에 여러 포스트가 있어 삭제할 수 없습니다.',
       );
     }
 

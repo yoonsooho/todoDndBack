@@ -16,6 +16,9 @@ export class ContentItem {
   @Column({ type: 'text', nullable: false })
   text: string;
 
+  @Column({ type: 'integer', nullable: false })
+  seq: number;
+
   @ManyToOne(() => Post, (post) => post.contentItems, { nullable: false })
   @JoinColumn({ name: 'post_id' })
   post: Post;

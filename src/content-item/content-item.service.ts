@@ -28,10 +28,19 @@ export class ContentItemService {
         `Post with ID ${createContentItemDto.post_id} not found`,
       );
     }
+    const maxSeq = await this.contentItemRepository
+      .createQueryBuilder('contentItem')
+      .select('MAX(contentItem.seq)', 'maxSeq')
+      .where('contentItem.post.id = :postId', {
+        postId: createContentItemDto.post_id,
+      })
+      .getRawOne();
+    const newSeq = (maxSeq?.maxSeq || 0) + 1;
 
     const contentItem = this.contentItemRepository.create({
       text: createContentItemDto.text,
       post: post,
+      seq: newSeq,
     });
 
     return this.contentItemRepository.save(contentItem);
@@ -87,11 +96,36 @@ export class ContentItemService {
       contentItem.text = updateContentItemDto.text;
     }
 
+    if (updateContentItemDto.seq !== undefined) {
+      contentItem.seq = updateContentItemDto.seq;
+    }
+
     return this.contentItemRepository.save(contentItem);
   }
 
   async remove(id: number): Promise<void> {
     const contentItem = await this.findOne(id);
     await this.contentItemRepository.remove(contentItem);
+  }
+
+  // 순서 변경 메서드 (드래그 앤 드롭용)
+  async updateSequence(
+    postId: number,
+    contentItemSeqUpdates: { id: number; seq: number }[],
+  ): Promise<void> {
+    await this.contentItemRepository.manager.transaction(async (manager) => {
+      for (const update of contentItemSeqUpdates) {
+        await manager.update(ContentItem, update.id, { seq: update.seq });
+      }
+    });
+  }
+
+  // 특정 post의 content-items를 seq 순서로 조회
+  async findByPostOrderedBySeq(postId: number): Promise<ContentItem[]> {
+    return this.contentItemRepository.find({
+      where: { post: { id: postId } },
+      relations: ['post'],
+      order: { seq: 'ASC' },
+    });
   }
 }

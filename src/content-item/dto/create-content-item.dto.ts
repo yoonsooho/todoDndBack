@@ -9,3 +9,17 @@ export class CreateContentItemDto {
   @IsNumber()
   post_id: number;
 }
+
+export class CreateContentItemSequenceDto {
+  @IsNotEmpty()
+  @IsString()
+  text: string;
+
+  @IsNotEmpty()
+  @IsNumber()
+  post_id: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  seq: number;
+}

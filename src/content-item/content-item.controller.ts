@@ -11,7 +11,10 @@ import {
 } from '@nestjs/common';
 import { ContentItemService } from './content-item.service';
 import { CreateContentItemDto } from './dto/create-content-item.dto';
-import { UpdateContentItemDto } from './dto/update-content-item.dto';
+import {
+  UpdateContentItemDto,
+  UpdateContentItemSequenceDto,
+} from './dto/update-content-item.dto';
 import { ContentItem } from './content-item.entity';
 
 @Controller('content-items')
@@ -30,7 +33,8 @@ export class ContentItemController {
     @Query('postId', new ParseIntPipe({ optional: true })) postId?: number,
   ): Promise<ContentItem[]> {
     if (postId) {
-      return this.contentItemService.findByPostId(postId);
+      // postId가 있으면 seq 순서로 정렬된 content-items 조회
+      return this.contentItemService.findByPostOrderedBySeq(postId);
     }
     return this.contentItemService.findAll();
   }
@@ -51,5 +55,18 @@ export class ContentItemController {
   @Delete(':id')
   async remove(@Param('id', ParseIntPipe) id: number): Promise<void> {
     return this.contentItemService.remove(id);
+  }
+
+  // 순서 변경 API (드래그 앤 드롭)
+  @Patch('reorder/:postId')
+  async updateSequence(
+    @Param('postId', ParseIntPipe) postId: number,
+    @Body() updateSequenceDto: UpdateContentItemSequenceDto,
+  ): Promise<{ message: string }> {
+    await this.contentItemService.updateSequence(
+      postId,
+      updateSequenceDto.contentItemSeqUpdates,
+    );
+    return { message: 'Content items 순서가 업데이트되었습니다.' };
   }
 }
