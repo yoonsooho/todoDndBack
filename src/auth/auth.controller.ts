@@ -12,8 +12,8 @@ import { AuthService } from './auth.service';
 import { SignUpDto } from './dto/sign-up.dto';
 import { SignInDto } from './dto/sign-in.dto';
 import { AccessTokenGuard } from 'src/common/guards/access-token.guard';
-import { Request } from 'express';
 import { RefreshTokenGuard } from 'src/common/guards/refresh-token.guard';
+import { Request } from 'express';
 
 @Controller('auth')
 export class AuthController {
@@ -84,18 +84,30 @@ export class AuthController {
     };
   }
 
-  @UseGuards(RefreshTokenGuard)
   @Get('refresh')
   async refreshAllTokens(
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ) {
+    try {
+      // RefreshTokenGuard를 사용하여 토큰 검증
+      return await this.refreshTokens(req, res);
+    } catch (error) {
+      // 토큰이 유효하지 않으면 쿠키 삭제
+      this.clearCookies(res);
+      throw error;
+    }
+  }
+
+  @UseGuards(RefreshTokenGuard)
+  private async refreshTokens(req: Request, res: Response) {
     const userId = req.user['sub'];
     const refreshToken = req.user['refreshToken'];
     const tokens = await this.authService.refreshAllTokens(
       userId,
       refreshToken,
     );
+
     const isProduction = process.env.NODE_ENV === 'production';
 
     // Cross-origin 배포 환경을 위한 쿠키 설정
@@ -120,5 +132,24 @@ export class AuthController {
     return {
       message: '토큰 갱신 성공',
     };
+  }
+
+  private clearCookies(res: Response) {
+    const isProduction = process.env.NODE_ENV === 'production';
+    const clearCookieOptions = {
+      secure: isProduction,
+      sameSite: (isProduction ? 'none' : 'lax') as 'none' | 'lax',
+      path: '/',
+    };
+
+    res.cookie('access_token', '', {
+      ...clearCookieOptions,
+      maxAge: 0,
+    });
+    res.cookie('refresh_token', '', {
+      ...clearCookieOptions,
+      httpOnly: true,
+      maxAge: 0,
+    });
   }
 }
