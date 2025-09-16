@@ -103,6 +103,11 @@ export class AuthController {
 
   @UseGuards(RefreshTokenGuard)
   private async refreshTokens(req: Request, res: Response) {
+    // req.user가 없으면 에러 던지기
+    if (!req.user) {
+      throw new Error('User not authenticated');
+    }
+
     const userId = req.user['sub'];
     const refreshToken = req.user['refreshToken'];
     const tokens = await this.authService.refreshAllTokens(
@@ -139,6 +144,8 @@ export class AuthController {
   private clearCookies(res: Response) {
     console.log('🧹 Starting to clear cookies...');
     const isProduction = process.env.NODE_ENV === 'production';
+
+    // 여러 옵션으로 쿠키 삭제 시도
     const clearCookieOptions = {
       secure: isProduction,
       sameSite: (isProduction ? 'none' : 'lax') as 'none' | 'lax',
@@ -147,6 +154,7 @@ export class AuthController {
 
     console.log('🍪 Clear cookie options:', clearCookieOptions);
 
+    // 방법 1: 기본 옵션으로 삭제
     res.cookie('access_token', '', {
       ...clearCookieOptions,
       maxAge: 0,
@@ -154,6 +162,19 @@ export class AuthController {
     res.cookie('refresh_token', '', {
       ...clearCookieOptions,
       httpOnly: true,
+      maxAge: 0,
+    });
+
+    // 방법 2: 명시적 만료 시간으로 삭제
+    res.cookie('access_token', '', {
+      ...clearCookieOptions,
+      expires: new Date(0),
+      maxAge: 0,
+    });
+    res.cookie('refresh_token', '', {
+      ...clearCookieOptions,
+      httpOnly: true,
+      expires: new Date(0),
       maxAge: 0,
     });
 
