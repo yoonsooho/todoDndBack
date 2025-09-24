@@ -19,7 +19,10 @@ export class ContentItem {
   @Column({ type: 'integer', nullable: false })
   seq: number;
 
-  @ManyToOne(() => Post, (post) => post.contentItems, { nullable: false })
+  @ManyToOne(() => Post, (post) => post.contentItems, {
+    nullable: false,
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'post_id' })
   post: Post;
 }

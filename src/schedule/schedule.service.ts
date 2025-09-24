@@ -33,7 +33,8 @@ export class ScheduleService {
     const createdSchedule = this.scheduleRepository.create({
       title: createScheduleDto.title,
       startDate: createScheduleDto.startDate,
-      endDate: createScheduleDto.endDate,
+      endDate:
+        createScheduleDto.endDate === '' ? null : createScheduleDto.endDate,
     });
     const savedSchedule = await this.scheduleRepository.save(createdSchedule);
 

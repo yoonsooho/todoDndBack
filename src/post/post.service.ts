@@ -105,10 +105,6 @@ export class PostService {
       post.title = updatePostDto.title;
     }
 
-    if (updatePostDto.seq !== undefined) {
-      post.seq = updatePostDto.seq;
-    }
-
     return this.postRepository.save(post);
   }
 
@@ -124,7 +120,19 @@ export class PostService {
   ): Promise<void> {
     await this.postRepository.manager.transaction(async (manager) => {
       for (const update of postSeqUpdates) {
-        await manager.update(Post, update.id, { seq: update.seq });
+        // 해당 post가 올바른 schedule에 속하는지 확인
+        const result = await manager.update(
+          Post,
+          { id: update.id, schedule: { id: scheduleId } },
+          { seq: update.seq },
+        );
+
+        // 업데이트된 행이 없으면 해당 post가 이 schedule에 속하지 않음
+        if (result.affected === 0) {
+          throw new NotFoundException(
+            `Post with ID ${update.id} not found in schedule ${scheduleId}`,
+          );
+        }
       }
     });
   }

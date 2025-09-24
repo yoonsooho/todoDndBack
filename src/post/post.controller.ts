@@ -74,22 +74,18 @@ export class PostController {
     return this.postService.update(id, updatePostDto);
   }
 
+  @Patch(':scheduleId/seq')
+  async updateSeq(
+    @Param('scheduleId', ParseIntPipe) scheduleId: number,
+    @Body() updatePostDto: UpdatePostSequenceDto['postSeqUpdates'],
+  ): Promise<{ message: string }> {
+    this.postService.updateSequence(scheduleId, updatePostDto);
+    return { message: 'Posts 순서가 업데이트되었습니다.' };
+  }
+
   @Delete(':id')
   async remove(@Param('id', ParseIntPipe) id: number): Promise<void> {
     return this.postService.remove(id);
-  }
-
-  // 순서 변경 API (드래그 앤 드롭)
-  @Patch('reorder/:scheduleId')
-  async updateSequence(
-    @Param('scheduleId', ParseIntPipe) scheduleId: number,
-    @Body() updateSequenceDto: UpdatePostSequenceDto,
-  ): Promise<{ message: string }> {
-    await this.postService.updateSequence(
-      scheduleId,
-      updateSequenceDto.postSeqUpdates,
-    );
-    return { message: 'Posts 순서가 업데이트되었습니다.' };
   }
 
   // 특정 스케줄의 순서별 posts 조회
