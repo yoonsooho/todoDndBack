@@ -20,7 +20,10 @@ export class Post {
   @Column({ type: 'varchar', length: 255, nullable: false })
   title: string;
 
-  @ManyToOne(() => Schedule, (schedule) => schedule.posts, { nullable: false })
+  @ManyToOne(() => Schedule, (schedule) => schedule.posts, {
+    nullable: false,
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'schedule_id' })
   schedule: Schedule;
 

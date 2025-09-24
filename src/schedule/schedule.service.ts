@@ -76,11 +76,9 @@ export class ScheduleService {
       relations: ['schedule'],
     });
 
-    if (!scheduleUser) throw new Error('Schedule not found or not shared');
+    if (!scheduleUser) throw new Error('공유된 스케줄이 아닙니다.');
     if (!scheduleUser.canEdit) {
-      throw new ForbiddenException(
-        'You do not have permission to edit this schedule',
-      );
+      throw new ForbiddenException('수정 권한이 없습니다.');
     }
 
     // 2. 스케줄 업데이트
@@ -111,16 +109,9 @@ export class ScheduleService {
       relations: ['schedule', 'schedule.posts'],
     });
 
-    if (!scheduleUser) throw new Error('Schedule not found or not shared');
+    if (!scheduleUser) throw new Error('공유된 스케줄이 아닙니다.');
     if (!scheduleUser.canEdit) {
-      throw new ForbiddenException(
-        'You do not have permission to delete this schedule',
-      );
-    }
-    if (scheduleUser.schedule.posts.length > 0) {
-      throw new ForbiddenException(
-        '내부에 여러 포스트가 있어 삭제할 수 없습니다.',
-      );
+      throw new ForbiddenException('수정 권한이 없습니다.');
     }
 
     const result = await this.scheduleRepository.delete(scheduleId);
