@@ -66,12 +66,12 @@ export class PostController {
     return this.postService.findOne(id);
   }
 
-  @Patch(':id')
+  @Patch(':scheduleId')
   async update(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('scheduleId', ParseIntPipe) scheduleId: number,
     @Body() updatePostDto: UpdatePostDto,
   ): Promise<PostEntity> {
-    return this.postService.update(id, updatePostDto);
+    return this.postService.update(scheduleId, updatePostDto);
   }
 
   @Patch(':scheduleId/seq')

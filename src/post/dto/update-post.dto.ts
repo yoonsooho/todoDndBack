@@ -7,6 +7,10 @@ export class UpdatePostDto extends PartialType(CreatePostInputClass) {
   @IsOptional()
   @IsNumber()
   seq?: number;
+
+  @IsOptional()
+  @IsNumber()
+  id?: number;
 }
 
 export class PostSeqUpdateDto {

@@ -84,22 +84,22 @@ export class PostService {
     });
   }
 
-  async update(id: number, updatePostDto: UpdatePostDto): Promise<Post> {
-    const post = await this.findOne(id);
+  async update(
+    scheduleId: number,
+    updatePostDto: UpdatePostDto,
+  ): Promise<Post> {
+    const schedule = await this.scheduleRepository.findOne({
+      where: { id: scheduleId },
+    });
+    const post = await this.postRepository.findOne({
+      where: { id: updatePostDto.id },
+    });
 
-    if (updatePostDto.schedule_id) {
-      const schedule = await this.scheduleRepository.findOne({
-        where: { id: updatePostDto.schedule_id },
-      });
-
-      if (!schedule) {
-        throw new NotFoundException(
-          `Schedule with ID ${updatePostDto.schedule_id} not found`,
-        );
-      }
-
-      post.schedule = schedule;
+    if (!schedule) {
+      throw new NotFoundException(`Schedule with ID ${scheduleId} not found`);
     }
+
+    post.schedule = schedule;
 
     if (updatePostDto.title) {
       post.title = updatePostDto.title;
