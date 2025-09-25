@@ -6,8 +6,8 @@ export class CreateContentItemDto {
   text: string;
 
   @IsNotEmpty()
-  @IsNumber()
-  post_id: number;
+  @IsString()
+  post_id: string;
 }
 
 export class CreateContentItemSequenceDto {
@@ -16,8 +16,8 @@ export class CreateContentItemSequenceDto {
   text: string;
 
   @IsNotEmpty()
-  @IsNumber()
-  post_id: number;
+  @IsString()
+  post_id: string;
 
   @IsNotEmpty()
   @IsNumber()

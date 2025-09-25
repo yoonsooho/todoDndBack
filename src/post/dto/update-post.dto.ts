@@ -1,6 +1,12 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { CreatePostInputClass } from './create-post.dto';
-import { IsArray, IsNumber, IsOptional, ValidateNested } from 'class-validator';
+import {
+  IsArray,
+  IsNumber,
+  IsOptional,
+  IsString,
+  ValidateNested,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class UpdatePostDto extends PartialType(CreatePostInputClass) {
@@ -9,13 +15,13 @@ export class UpdatePostDto extends PartialType(CreatePostInputClass) {
   seq?: number;
 
   @IsOptional()
-  @IsNumber()
-  id?: number;
+  @IsString()
+  id?: string;
 }
 
 export class PostSeqUpdateDto {
-  @IsNumber()
-  id: number;
+  @IsString()
+  id: string;
 
   @IsNumber()
   seq: number;

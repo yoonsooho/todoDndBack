@@ -38,7 +38,9 @@ export class PostService {
 
     const newSeq = (maxSeqResult?.maxSeq || 0) + 1;
 
+    const postId = `post-${Date.now()}`;
     const post = this.postRepository.create({
+      id: postId,
       title: createPostDto.title,
       seq: newSeq,
       schedule: schedule,
@@ -57,7 +59,7 @@ export class PostService {
     });
   }
 
-  async findOne(id: number): Promise<Post> {
+  async findOne(id: string): Promise<Post> {
     const post = await this.postRepository.findOne({
       where: { id },
       relations: ['schedule', 'contentItems'],
@@ -108,7 +110,7 @@ export class PostService {
     return this.postRepository.save(post);
   }
 
-  async remove(id: number): Promise<void> {
+  async remove(id: string): Promise<void> {
     const post = await this.findOne(id);
     await this.postRepository.remove(post);
   }
@@ -116,7 +118,7 @@ export class PostService {
   // 순서 변경 메서드 (드래그 앤 드롭용)
   async updateSequence(
     scheduleId: number,
-    postSeqUpdates: { id: number; seq: number }[],
+    postSeqUpdates: { id: string; seq: number }[],
   ): Promise<void> {
     await this.postRepository.manager.transaction(async (manager) => {
       for (const update of postSeqUpdates) {

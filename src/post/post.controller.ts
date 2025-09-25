@@ -62,7 +62,7 @@ export class PostController {
   }
 
   @Get(':id')
-  async findOne(@Param('id', ParseIntPipe) id: number): Promise<PostEntity> {
+  async findOne(@Param('id') id: string): Promise<PostEntity> {
     return this.postService.findOne(id);
   }
 
@@ -79,12 +79,12 @@ export class PostController {
     @Param('scheduleId', ParseIntPipe) scheduleId: number,
     @Body() updatePostDto: UpdatePostSequenceDto['postSeqUpdates'],
   ): Promise<{ message: string }> {
-    this.postService.updateSequence(scheduleId, updatePostDto);
+    await this.postService.updateSequence(scheduleId, updatePostDto);
     return { message: 'Posts 순서가 업데이트되었습니다.' };
   }
 
   @Delete(':id')
-  async remove(@Param('id', ParseIntPipe) id: number): Promise<void> {
+  async remove(@Param('id') id: string): Promise<void> {
     return this.postService.remove(id);
   }
 

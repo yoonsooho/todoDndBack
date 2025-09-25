@@ -1,6 +1,6 @@
 import {
   Entity,
-  PrimaryGeneratedColumn,
+  PrimaryColumn,
   Column,
   ManyToOne,
   OneToMany,
@@ -11,8 +11,8 @@ import { ContentItem } from 'src/content-item/content-item.entity';
 
 @Entity('posts')
 export class Post {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryColumn()
+  id: string;
 
   @Column({ type: 'integer', nullable: false })
   seq: number;

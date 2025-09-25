@@ -29,9 +29,7 @@ export class ContentItemController {
   }
 
   @Get()
-  async findAll(
-    @Query('postId', new ParseIntPipe({ optional: true })) postId?: number,
-  ): Promise<ContentItem[]> {
+  async findAll(@Query('postId') postId?: string): Promise<ContentItem[]> {
     if (postId) {
       // postId가 있으면 seq 순서로 정렬된 content-items 조회
       return this.contentItemService.findByPostOrderedBySeq(postId);
@@ -60,7 +58,7 @@ export class ContentItemController {
   // 순서 변경 API (드래그 앤 드롭)
   @Patch('reorder/:postId')
   async updateSequence(
-    @Param('postId', ParseIntPipe) postId: number,
+    @Param('postId') postId: string,
     @Body() updateSequenceDto: UpdateContentItemSequenceDto,
   ): Promise<{ message: string }> {
     await this.contentItemService.updateSequence(

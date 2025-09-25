@@ -65,7 +65,7 @@ export class ContentItemService {
     return contentItem;
   }
 
-  async findByPostId(postId: number): Promise<ContentItem[]> {
+  async findByPostId(postId: string): Promise<ContentItem[]> {
     return this.contentItemRepository.find({
       where: { post: { id: postId } },
       relations: ['post'],
@@ -110,7 +110,7 @@ export class ContentItemService {
 
   // 순서 변경 메서드 (드래그 앤 드롭용)
   async updateSequence(
-    postId: number,
+    postId: string,
     contentItemSeqUpdates: { id: number; seq: number }[],
   ): Promise<void> {
     await this.contentItemRepository.manager.transaction(async (manager) => {
@@ -121,7 +121,7 @@ export class ContentItemService {
   }
 
   // 특정 post의 content-items를 seq 순서로 조회
-  async findByPostOrderedBySeq(postId: number): Promise<ContentItem[]> {
+  async findByPostOrderedBySeq(postId: string): Promise<ContentItem[]> {
     return this.contentItemRepository.find({
       where: { post: { id: postId } },
       relations: ['post'],
