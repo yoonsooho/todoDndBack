@@ -1,11 +1,4 @@
-import {
-  Entity,
-  PrimaryColumn,
-  Column,
-  ManyToOne,
-  OneToMany,
-  JoinColumn,
-} from 'typeorm';
+import { Entity, PrimaryColumn, Column, ManyToOne, OneToMany } from 'typeorm';
 import { Schedule } from 'src/schedule/schedule.entity';
 import { ContentItem } from 'src/content-item/content-item.entity';
 
@@ -24,7 +17,6 @@ export class Post {
     nullable: false,
     onDelete: 'CASCADE',
   })
-  @JoinColumn({ name: 'schedule_id' })
   schedule: Schedule;
 
   @OneToMany(() => ContentItem, (contentItem) => contentItem.post)
