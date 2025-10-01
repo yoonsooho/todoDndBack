@@ -7,7 +7,7 @@ export class Post {
   @PrimaryColumn()
   id: string;
 
-  @Column({ type: 'int', generated: 'increment' })
+  @Column({ type: 'int' })
   seq: number;
 
   @Column({ type: 'varchar', length: 255, nullable: false })
