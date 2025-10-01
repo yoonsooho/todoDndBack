@@ -130,4 +130,59 @@ export class ContentItemService {
       order: { seq: 'ASC' },
     });
   }
+
+  // ContentItem을 다른 Post로 이동하고 두 Post의 seq 재정렬
+  async moveContentItem(moveData: {
+    contentItemId: number;
+    fromPostId: string;
+    toPostId: string;
+    toPostContentItems: { id: number; seq: number }[];
+  }): Promise<void> {
+    await this.contentItemRepository.manager.transaction(async (manager) => {
+      // 1. ContentItem이 존재하고 fromPost에 속하는지 확인
+      const contentItem = await manager.findOne(ContentItem, {
+        where: {
+          id: moveData.contentItemId,
+          post: { id: moveData.fromPostId },
+        },
+        relations: ['post'],
+      });
+
+      if (!contentItem) {
+        throw new NotFoundException(
+          `ContentItem with ID ${moveData.contentItemId} not found in post ${moveData.fromPostId}`,
+        );
+      }
+
+      // 2. toPost가 존재하는지 확인
+      const toPost = await manager.findOne(Post, {
+        where: { id: moveData.toPostId },
+      });
+
+      if (!toPost) {
+        throw new NotFoundException(
+          `Post with ID ${moveData.toPostId} not found`,
+        );
+      }
+
+      // 3. ContentItem의 post 변경
+      await manager.update(ContentItem, moveData.contentItemId, {
+        post: { id: moveData.toPostId },
+      });
+
+      // 4. fromPost의 나머지 contentItems seq 조정 (삭제된 item보다 큰 seq들을 -1)
+      await manager
+        .createQueryBuilder()
+        .update(ContentItem)
+        .set({ seq: () => 'seq - 1' })
+        .where('post.id = :fromPostId', { fromPostId: moveData.fromPostId })
+        .andWhere('seq > :deletedSeq', { deletedSeq: contentItem.seq })
+        .execute();
+
+      // 5. toPost의 contentItems seq 업데이트
+      for (const update of moveData.toPostContentItems) {
+        await manager.update(ContentItem, update.id, { seq: update.seq });
+      }
+    });
+  }
 }

@@ -8,6 +8,7 @@ import {
   Delete,
   Query,
   ParseIntPipe,
+  Put,
 } from '@nestjs/common';
 import { ContentItemService } from './content-item.service';
 import { CreateContentItemDto } from './dto/create-content-item.dto';
@@ -15,6 +16,7 @@ import {
   UpdateContentItemDto,
   UpdateContentItemSequenceDto,
 } from './dto/update-content-item.dto';
+import { MoveContentItemDto } from './dto/move-content-item.dto';
 import { ContentItem } from './content-item.entity';
 
 @Controller('content-items')
@@ -56,7 +58,7 @@ export class ContentItemController {
   }
 
   // 순서 변경 API (드래그 앤 드롭)
-  @Patch('reorder/:postId')
+  @Patch(':postId/seq')
   async updateSequence(
     @Param('postId') postId: string,
     @Body() updateSequenceDto: UpdateContentItemSequenceDto,
@@ -66,5 +68,14 @@ export class ContentItemController {
       updateSequenceDto.contentItemSeqUpdates,
     );
     return { message: 'Content items 순서가 업데이트되었습니다.' };
+  }
+
+  // ContentItem을 다른 Post로 이동
+  @Put('move')
+  async moveContentItem(
+    @Body() moveContentItemDto: MoveContentItemDto,
+  ): Promise<{ message: string }> {
+    await this.contentItemService.moveContentItem(moveContentItemDto);
+    return { message: 'Content item이 성공적으로 이동되었습니다.' };
   }
 }
