@@ -28,19 +28,10 @@ export class ContentItemService {
         `Post with ID ${createContentItemDto.post_id} not found`,
       );
     }
-    const maxSeq = await this.contentItemRepository
-      .createQueryBuilder('contentItem')
-      .select('MAX(contentItem.seq)', 'maxSeq')
-      .where('contentItem.post.id = :postId', {
-        postId: createContentItemDto.post_id,
-      })
-      .getRawOne();
-    const newSeq = (maxSeq?.maxSeq || 0) + 1;
-
     const contentItem = this.contentItemRepository.create({
       text: createContentItemDto.text,
       post: post,
-      seq: newSeq,
+      // seq는 DB가 자동으로 생성
     });
 
     return this.contentItemRepository.save(contentItem);

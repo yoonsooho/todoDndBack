@@ -10,7 +10,7 @@ export class ContentItem {
   @Column({ type: 'text', nullable: false })
   text: string;
 
-  @Column({ type: 'integer', nullable: false })
+  @Column({ type: 'int', generated: 'increment' })
   seq: number;
 
   @ManyToOne(() => Post, (post) => post.contentItems, {

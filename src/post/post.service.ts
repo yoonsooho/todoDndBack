@@ -27,22 +27,11 @@ export class PostService {
       );
     }
 
-    // 해당 스케줄의 가장 큰 seq 값 조회하여 +1로 설정 (seq 중복 방지)
-    const maxSeqResult = await this.postRepository
-      .createQueryBuilder('post')
-      .select('MAX(post.seq)', 'maxSeq')
-      .where('post.schedule.id = :scheduleId', {
-        scheduleId: createPostDto.schedule_id,
-      })
-      .getRawOne();
-
-    const newSeq = (maxSeqResult?.maxSeq || 0) + 1;
-
     const postId = `post-${Date.now()}`;
     const post = this.postRepository.create({
       id: postId,
       title: createPostDto.title,
-      seq: newSeq,
+      // seq는 DB가 자동으로 생성
       schedule: schedule,
     });
 
