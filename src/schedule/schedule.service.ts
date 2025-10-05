@@ -89,8 +89,9 @@ export class ScheduleService {
     if (updateScheduleDto.startDate) {
       schedule.startDate = updateScheduleDto.startDate;
     }
-    if (updateScheduleDto.endDate) {
-      schedule.endDate = updateScheduleDto.endDate;
+    if (updateScheduleDto.endDate || updateScheduleDto.endDate === '') {
+      schedule.endDate =
+        updateScheduleDto.endDate === '' ? null : updateScheduleDto.endDate;
     }
 
     return this.scheduleRepository.save(schedule);

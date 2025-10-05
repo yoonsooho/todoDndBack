@@ -1,5 +1,6 @@
 import { ScheduleUser } from 'src/schedule-user/entities/schedule-user.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Routine } from 'src/routine/routine.entity';
 
 @Entity({
   name: 'users',
@@ -46,4 +47,7 @@ export class User {
 
   @OneToMany(() => ScheduleUser, (scheduleUser) => scheduleUser.user)
   scheduleUsers: ScheduleUser[];
+
+  @OneToMany(() => Routine, (routine) => routine.user)
+  routines: Routine[];
 }
