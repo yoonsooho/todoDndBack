@@ -3,9 +3,11 @@ import { registerAs } from '@nestjs/config';
 
 const config = {
   type: 'postgres',
-  // DATABASE_URL이 있으면 우선 사용, 없으면 개별 변수 사용
   ...(process.env.DATABASE_URL
-    ? { url: process.env.DATABASE_URL }
+    ? {
+        url: process.env.DATABASE_URL,
+        ssl: { rejectUnauthorized: false }, // Supabase SSL 설정
+      }
     : {
         host: `${process.env.DB_HOST || 'localhost'}`,
         port: parseInt(`${process.env.DB_PORT || '5432'}`, 10),
