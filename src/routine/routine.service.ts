@@ -236,6 +236,26 @@ export class RoutineService {
       );
     }
 
+    // 연속성 체크
+    let newStreak = 1; // 기본값은 1
+    if (routine.last_completed_date) {
+      const lastCompletedDate = new Date(routine.last_completed_date);
+      const currentCompletionDate = new Date(completionDate);
+
+      // 하루 차이인지 확인 (연속성 체크)
+      const diffTime =
+        currentCompletionDate.getTime() - lastCompletedDate.getTime();
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+      if (diffDays === 1 || diffDays === 0) {
+        // 연속된 경우: 기존 streak + 1
+        newStreak = routine.streak + 1;
+      } else {
+        // 연속되지 않은 경우: streak 초기화
+        newStreak = 1;
+      }
+    }
+
     // 완료 기록 생성
     const completion = this.routineCompletionRepository.create({
       routine: { id: routineId },
@@ -244,10 +264,10 @@ export class RoutineService {
 
     await this.routineCompletionRepository.save(completion);
 
-    // 루틴의 last_completed_date 업데이트
+    // 루틴의 last_completed_date와 streak 업데이트
     await this.routineRepository.update(routineId, {
       last_completed_date: completionDate,
-      streak: routine.streak + 1,
+      streak: newStreak,
     });
 
     // 캐시 무효화
@@ -257,7 +277,7 @@ export class RoutineService {
       routine_id: routineId,
       completed_at: completion.completed_at,
       date: completionDate,
-      streak: routine.streak + 1,
+      streak: newStreak,
     };
   }
 
@@ -290,6 +310,7 @@ export class RoutineService {
         date: targetDate,
       },
     });
+    console.log('completion', completion);
 
     if (!completion) {
       throw new NotFoundException('해당 날짜에 완료된 루틴이 없습니다.');
@@ -299,8 +320,8 @@ export class RoutineService {
 
     // 루틴의 last_completed_date 업데이트
     await this.routineRepository.update(routineId, {
-      last_completed_date: null,
       streak: routine.streak - 1,
+      last_completed_date: null,
     });
 
     // 캐시 무효화

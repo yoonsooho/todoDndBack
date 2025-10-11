@@ -6,7 +6,6 @@ const config = {
   ...(process.env.DATABASE_URL
     ? {
         url: process.env.DATABASE_URL,
-        ssl: { rejectUnauthorized: false }, // Supabase SSL 설정
       }
     : {
         host: `${process.env.DB_HOST || 'localhost'}`,
